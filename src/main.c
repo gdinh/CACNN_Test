@@ -524,14 +524,14 @@ int main ( int argc, const char* argv[] )
 	 }
 
 	 // Print results
-	 printf( "Standard Convolution Timing (Seconds)\n" );
-	 printf( "mean = %lf, median = %lf\n", mean( data_std, __TRIALS ), median( data_std, __TRIALS ) );
+	 // printf( "Standard Convolution Timing (Seconds)\n" );
+	 // printf( "mean = %lf, median = %lf\n", mean( data_std, __TRIALS ), median( data_std, __TRIALS ) );
 
-	 printf( "Communication Avoiding Convolution Timing (Seconds)\n" );
-	 printf( "mean = %lf, median = %lf\n", mean( data_cacnn, __TRIALS ), median( data_cacnn, __TRIALS ) );
+	 // printf( "Communication Avoiding Convolution Timing (Seconds)\n" );
+	 // printf( "mean = %lf, median = %lf\n", mean( data_cacnn, __TRIALS ), median( data_cacnn, __TRIALS ) );
 
-	 printf( "Im2Col Matrix Multiplication Timing (Seconds)\n" );
-	 printf( "mean = %lf, median = %lf\n", mean( data_im2col, __TRIALS ), median( data_im2col, __TRIALS ) );
+	 // printf( "Im2Col Matrix Multiplication Timing (Seconds)\n" );
+	 // printf( "mean = %lf, median = %lf\n", mean( data_im2col, __TRIALS ), median( data_im2col, __TRIALS ) );
 
 	 fail7:
 	 	free( data_std );

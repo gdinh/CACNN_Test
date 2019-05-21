@@ -62,12 +62,12 @@ int convolve_cacnn
 									rpp = rpp_b + rpp_p;
 									sp  = sp_b  + sp_p;
 									spp = spp_b + spp_p;
-									// printf("in: %d\n", (c*in_H*in_W) + (spp + sigmaH*(sp + h))*(in_W) + (rpp + sigmaW*(rp + w)) );
-									// printf("out: %d\n", k*W*H + h*W + w );
-									// printf("filt: %d\t %d\n", k, (c*R*S) + (sigmaH*sp + spp)*(R) + (sigmaW*rp + rpp) );
-									float u = filters[k][ (c*R*S) + (sigmaH*sp + spp)*(R) + (sigmaW*rp + rpp) ];
-									float v = in[ (c*in_H*in_W) + (spp + sigmaH*(sp + h))*(in_W) + (rpp + sigmaW*(rp + w)) ];
-									out[ k*W*H + h*W + w ] += u*v;
+									printf("in: %d\n", (c*in_H*in_W) + (spp + sigmaH*(sp + h))*(in_W) + (rpp + sigmaW*(rp + w)) );
+									printf("out: %d\n", k*W*H + h*W + w );
+									printf("filt: %d\t %d\n", k, (c*R*S) + (sigmaH*sp + spp)*(R) + (sigmaW*rp + rpp) );
+									// float u = filters[k][ (c*R*S) + (sigmaH*sp + spp)*(R) + (sigmaW*rp + rpp) ];
+									// float v = in[ (c*in_H*in_W) + (spp + sigmaH*(sp + h))*(in_W) + (rpp + sigmaW*(rp + w)) ];
+									// out[ k*W*H + h*W + w ] += u*v;
 								}
 							}
 						}
