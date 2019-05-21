@@ -17,7 +17,10 @@ void inner_multiply ( int m, int k, int n, float *A, int LDA, float *B, int LDB,
 {
 	if ( depth >= max_depth || m <= 4 || n <= 4 || k <= 4 )
 	{
-		cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, m, n, k, 1, A, LDA, B, LDB, 0, C, LDC);
+		for ( int i = 0; i < m; ++i )
+			for ( int j = 0; j < n; ++j )
+				for ( int l = 0; l < k; ++l )
+					C[ i*LDC + j ] += A[ i*LDA + l ] * B[ l*LDB + j ];
 		return;
 	}
 

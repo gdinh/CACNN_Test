@@ -1,5 +1,5 @@
 #include "cacnn.h"
-
+#define min( a, b ) (a < b ? a : b)
 // Communication Avoiding Convolution
 int convolve_cacnn
 (
@@ -38,21 +38,21 @@ int convolve_cacnn
 								{
 
 	// Piecing
-	for ( c_p = 0; c_p < C_block; c_p += 1 )
+	for ( c_p = 0; c_p < min( C - c_b, C_block ); c_p += 1 )
 	{
-		for ( k_p = 0; k_p < K_block; k_p += 1 )
+		for ( k_p = 0; k_p < min( K - k_b, K_block ); k_p += 1 )
 		{
-			for ( w_p = 0; w_p < W_block; w_p += 1 )
+			for ( w_p = 0; w_p < min( W - w_b, W_block ); w_p += 1 )
 			{
-				for ( h_p = 0; h_p < H_block; h_p += 1 )
+				for ( h_p = 0; h_p < min( H - h_b, H_block ); h_p += 1 )
 				{
-					for ( rp_p = 0; rp_p < RP_block; rp_p += 1 )
+					for ( rp_p = 0; rp_p < min( r_bound - rp_b, RP_block ); rp_p += 1 )
 					{
-						for ( rpp_p = 0; rpp_p < RPP_block; rpp_p += 1 )
+						for ( rpp_p = 0; rpp_p < min( sigmaW - rpp_b, RPP_block ); rpp_p += 1 )
 						{
-							for ( sp_p = 0; sp_p < SP_block; sp_p += 1 )
+							for ( sp_p = 0; sp_p < min( s_bound - sp_b, SP_block ); sp_p += 1 )
 							{
-								for ( spp_p = 0; spp_p < SPP_block; spp_p += 1 )
+								for ( spp_p = 0; spp_p < min( sigmaH - spp_b, SPP_block ); spp_p += 1 )
 								{
 									c   = c_b   + c_p;
 									k   = k_b   + k_p;
@@ -62,7 +62,9 @@ int convolve_cacnn
 									rpp = rpp_b + rpp_p;
 									sp  = sp_b  + sp_p;
 									spp = spp_b + spp_p;
-
+									// printf("in: %d\n", (c*in_H*in_W) + (spp + sigmaH*(sp + h))*(in_W) + (rpp + sigmaW*(rp + w)) );
+									// printf("out: %d\n", k*W*H + h*W + w );
+									// printf("filt: %d\t %d\n", k, (c*R*S) + (sigmaH*sp + spp)*(R) + (sigmaW*rp + rpp) );
 									float u = filters[k][ (c*R*S) + (sigmaH*sp + spp)*(R) + (sigmaW*rp + rpp) ];
 									float v = in[ (c*in_H*in_W) + (spp + sigmaH*(sp + h))*(in_W) + (rpp + sigmaW*(rp + w)) ];
 									out[ k*W*H + h*W + w ] += u*v;
@@ -82,6 +84,5 @@ int convolve_cacnn
 			}
 		}
 	}
-
 	return 0;
 }
