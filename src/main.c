@@ -428,6 +428,7 @@ int main ( int argc, const char* argv[] )
 	 // For each algorithm in {im2col, convolve_std, convolve_cacnn}: convolve_std
 	 // Repeat TRIALS times
 	 uint64_t a, b, c, d;
+	 /*
 	 for ( i = 0; i < __TRIALS; ++i )
 	 {
 	 	// Load All Data (touch input, zero output)
@@ -458,6 +459,7 @@ int main ( int argc, const char* argv[] )
 	 	volatile double end = read_timer();
 	 	data_std[i] = end - start;
 	 }
+	*/
 
 	 // For each algorithm in {im2col, convolve_std, convolve_cacnn}: convolve_cacnn
 	 for ( i = 0; i < __TRIALS; ++i )
@@ -493,6 +495,9 @@ int main ( int argc, const char* argv[] )
 	 	data_cacnn[i] = end - start;
 	 }
 
+	 return 0;
+
+	/*
 	 // // For each algorithm in {im2col, convolve_std, convolve_cacnn}: im2col
 	 for ( i = 0; i < __TRIALS; ++i )
 	 {
@@ -522,6 +527,7 @@ int main ( int argc, const char* argv[] )
 	 	volatile double end = read_timer();
 	 	data_im2col[i] = end - start;
 	 }
+	 */
 
 	 // Print results
 	 // printf( "Standard Convolution Timing (Seconds)\n" );

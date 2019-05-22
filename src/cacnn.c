@@ -1,6 +1,6 @@
 #include "cacnn.h"
 #define min( a, b ) (a < b ? a : b)
-#define CACHESIZE 8000
+#define CACHESIZE 16384
 // Communication Avoiding Convolution
 int convolve_cacnn
 (
@@ -11,9 +11,9 @@ int convolve_cacnn
 )
 {
 	//set up the list for cache tracking
-	std::list<unsigned long long int> simulated_cache;
+	linked_hash_set<unsigned long long int> simulated_cache;
 	unsigned int cache_misses = 0;
-	unsigned long long int index_o, index_i, index_f;
+	unsigned long long int index_o, index_i, index_f, num_iter = 0;
 	unsigned int current_cache_count, prior_cache_count;
 
 	// Main Iterations
@@ -42,7 +42,7 @@ int convolve_cacnn
 							for ( sp_b = 0; sp_b < s_bound; sp_b += SP_block )
 							{
 								for ( spp_b = 0; spp_b < sigmaH; spp_b += SPP_block )
-								{
+								{printf("DEBUG MESSAGE (cacnn:45: we got here\n");
 
 	// Piecing
 	for ( c_p = 0; c_p < min( C - c_b, C_block ); c_p += 1 )
@@ -79,65 +79,65 @@ int convolve_cacnn
 									index_f = (index_f << 2) + 2;
 
 									//now test if each of these are in the fake cache:
-
+									num_iter++;
 									prior_cache_count = simulated_cache.size();
- 									simulated_cache.remove(index_i);
+ 									simulated_cache.erase(index_i);
 									current_cache_count = simulated_cache.size();
 									if(prior_cache_count == current_cache_count){
 										//CACHE MISS
 										//NOTHING DELETED
 										cache_misses++;
 										//put the element in the cache
-										simulated_cache.emplace_back(index_i);
+										simulated_cache.insert(index_i);
 										//remove LRU if cache too big
 										current_cache_count++;
 										if(current_cache_count > CACHESIZE){
-											simulated_cache.pop_front();
+											simulated_cache.erase(std::prev(simulated_cache.end()));
 											current_cache_count--;
 										}
 									}else{
 										//CACHE HIT. TACK IT ON THE END TO AVOID LRU REMOVAL. NO MODS.
-										simulated_cache.emplace_back(index_i);
+										simulated_cache.insert(index_i);
 									}
 
 									prior_cache_count = current_cache_count;
- 									simulated_cache.remove(index_o);
+ 									simulated_cache.erase(index_o);
 									current_cache_count = simulated_cache.size();
 									if(prior_cache_count == current_cache_count){
 										//CACHE MISS
 										//NOTHING DELETED
 										cache_misses++;
 										//put the element in the cache
-										simulated_cache.emplace_back(index_o);
+										simulated_cache.insert(index_o);
 										//remove LRU if cache too big
 										current_cache_count++;
 										if(current_cache_count > CACHESIZE){
-											simulated_cache.pop_front();
+											simulated_cache.erase(std::prev(simulated_cache.end()));
 											current_cache_count--;
 										}
 									}else{
 										//CACHE HIT. TACK IT ON THE END TO AVOID LRU REMOVAL. NO MODS.
-										simulated_cache.emplace_back(index_o);
+										simulated_cache.insert(index_o);
 									}
 
 									prior_cache_count = current_cache_count;
- 									simulated_cache.remove(index_f);
+ 									simulated_cache.erase(index_f);
 									current_cache_count = simulated_cache.size();
 									if(prior_cache_count == current_cache_count){
 										//CACHE MISS
 										//NOTHING DELETED
 										cache_misses++;
 										//put the element in the cache
-										simulated_cache.emplace_back(index_f);
+										simulated_cache.insert(index_f);
 										//remove LRU if cache too big
 										current_cache_count++;
 										if(current_cache_count > CACHESIZE){
-											simulated_cache.pop_front();
+											simulated_cache.erase(std::prev(simulated_cache.end()));
 											current_cache_count--;
 										}
 									}else{
 										//CACHE HIT. TACK IT ON THE END TO AVOID LRU REMOVAL. NO MODS.
-										simulated_cache.emplace_back(index_f);
+										simulated_cache.insert(index_f);
 									}
 
 									// float u = filters[k][ (c*R*S) + (sigmaH*sp + spp)*(R) + (sigmaW*rp + rpp) ];
@@ -163,5 +163,6 @@ int convolve_cacnn
 	printf("Cache size: %u\n", CACHESIZE);
 	printf("# of occupied spots after finishing (should be CACHESIZE): %u\n", current_cache_count);
 	printf("# of cache misses: %u\n", cache_misses);
+	printf("# of iterations: %u\n", num_iter);
 	return 0;
 }

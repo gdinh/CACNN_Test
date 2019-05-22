@@ -7,6 +7,7 @@
 #include <list>
 #include <string>
 #include <algorithm>
+#include <linked_hash.hpp>
 
 // Standard Convolution
 int convolve_cacnn
