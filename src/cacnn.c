@@ -42,7 +42,7 @@ int convolve_cacnn
 							for ( sp_b = 0; sp_b < s_bound; sp_b += SP_block )
 							{
 								for ( spp_b = 0; spp_b < sigmaH; spp_b += SPP_block )
-								{printf("DEBUG MESSAGE (cacnn:45: we got here\n");
+								{
 
 	// Piecing
 	for ( c_p = 0; c_p < min( C - c_b, C_block ); c_p += 1 )
@@ -90,17 +90,15 @@ int convolve_cacnn
 										//put the element in the cache
 										simulated_cache.insert(index_i);
 										//remove LRU if cache too big
-										current_cache_count++;
 										if(current_cache_count > CACHESIZE){
 											simulated_cache.erase(std::prev(simulated_cache.end()));
-											current_cache_count--;
 										}
 									}else{
 										//CACHE HIT. TACK IT ON THE END TO AVOID LRU REMOVAL. NO MODS.
 										simulated_cache.insert(index_i);
 									}
 
-									prior_cache_count = current_cache_count;
+									prior_cache_count = simulated_cache.size();
  									simulated_cache.erase(index_o);
 									current_cache_count = simulated_cache.size();
 									if(prior_cache_count == current_cache_count){
@@ -110,17 +108,15 @@ int convolve_cacnn
 										//put the element in the cache
 										simulated_cache.insert(index_o);
 										//remove LRU if cache too big
-										current_cache_count++;
 										if(current_cache_count > CACHESIZE){
 											simulated_cache.erase(std::prev(simulated_cache.end()));
-											current_cache_count--;
 										}
 									}else{
 										//CACHE HIT. TACK IT ON THE END TO AVOID LRU REMOVAL. NO MODS.
 										simulated_cache.insert(index_o);
 									}
 
-									prior_cache_count = current_cache_count;
+									prior_cache_count = simulated_cache.size();
  									simulated_cache.erase(index_f);
 									current_cache_count = simulated_cache.size();
 									if(prior_cache_count == current_cache_count){
@@ -130,10 +126,8 @@ int convolve_cacnn
 										//put the element in the cache
 										simulated_cache.insert(index_f);
 										//remove LRU if cache too big
-										current_cache_count++;
 										if(current_cache_count > CACHESIZE){
 											simulated_cache.erase(std::prev(simulated_cache.end()));
-											current_cache_count--;
 										}
 									}else{
 										//CACHE HIT. TACK IT ON THE END TO AVOID LRU REMOVAL. NO MODS.
