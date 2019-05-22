@@ -1,5 +1,6 @@
 #include "cacnn.h"
 #define min( a, b ) (a < b ? a : b)
+#define CACHESIZE 8000
 // Communication Avoiding Convolution
 int convolve_cacnn
 (
@@ -9,6 +10,12 @@ int convolve_cacnn
 	uint32_t RP_block, uint32_t RPP_block, uint32_t SP_block, uint32_t SPP_block
 )
 {
+	//set up the list for cache tracking
+	std::list<unsigned long long int> simulated_cache;
+	unsigned int cache_misses = 0;
+	unsigned long long int index_o, index_i, index_f;
+	unsigned int current_cache_count, prior_cache_count;
+
 	// Main Iterations
 	uint32_t c,   k,   w,   h,   rp,   rpp,   sp,   spp;
 	uint32_t c_b, k_b, w_b, h_b, rp_b, rpp_b, sp_b, spp_b;
@@ -62,9 +69,77 @@ int convolve_cacnn
 									rpp = rpp_b + rpp_p;
 									sp  = sp_b  + sp_p;
 									spp = spp_b + spp_p;
-									printf("in: %d\n", (c*in_H*in_W) + (spp + sigmaH*(sp + h))*(in_W) + (rpp + sigmaW*(rp + w)) );
-									printf("out: %d\n", k*W*H + h*W + w );
-									printf("filt: %d\t %d\n", k, (c*R*S) + (sigmaH*sp + spp)*(R) + (sigmaW*rp + rpp) );
+									index_i = (c*in_H*in_W) + (spp + sigmaH*(sp + h))*(in_W) + (rpp + sigmaW*(rp + w));
+									index_o = k*W*H + h*W + w;
+									index_f = k + K * ((c*R*S) + (sigmaH*sp + spp)*(R) + (sigmaW*rp + rpp) );
+
+									//offset everything by two bits and then edit the trailing bits so they're distinguishable
+									index_i = index_i << 2;
+									index_o = (index_o << 2) + 1;
+									index_f = (index_f << 2) + 2;
+
+									//now test if each of these are in the fake cache:
+
+									prior_cache_count = simulated_cache.size();
+ 									simulated_cache.remove(index_i);
+									current_cache_count = simulated_cache.size();
+									if(prior_cache_count == current_cache_count){
+										//CACHE MISS
+										//NOTHING DELETED
+										cache_misses++;
+										//put the element in the cache
+										simulated_cache.emplace_back(index_i);
+										//remove LRU if cache too big
+										current_cache_count++;
+										if(current_cache_count > CACHESIZE){
+											simulated_cache.pop_front();
+											current_cache_count--;
+										}
+									}else{
+										//CACHE HIT. TACK IT ON THE END TO AVOID LRU REMOVAL. NO MODS.
+										simulated_cache.emplace_back(index_i);
+									}
+
+									prior_cache_count = current_cache_count;
+ 									simulated_cache.remove(index_o);
+									current_cache_count = simulated_cache.size();
+									if(prior_cache_count == current_cache_count){
+										//CACHE MISS
+										//NOTHING DELETED
+										cache_misses++;
+										//put the element in the cache
+										simulated_cache.emplace_back(index_o);
+										//remove LRU if cache too big
+										current_cache_count++;
+										if(current_cache_count > CACHESIZE){
+											simulated_cache.pop_front();
+											current_cache_count--;
+										}
+									}else{
+										//CACHE HIT. TACK IT ON THE END TO AVOID LRU REMOVAL. NO MODS.
+										simulated_cache.emplace_back(index_o);
+									}
+
+									prior_cache_count = current_cache_count;
+ 									simulated_cache.remove(index_f);
+									current_cache_count = simulated_cache.size();
+									if(prior_cache_count == current_cache_count){
+										//CACHE MISS
+										//NOTHING DELETED
+										cache_misses++;
+										//put the element in the cache
+										simulated_cache.emplace_back(index_f);
+										//remove LRU if cache too big
+										current_cache_count++;
+										if(current_cache_count > CACHESIZE){
+											simulated_cache.pop_front();
+											current_cache_count--;
+										}
+									}else{
+										//CACHE HIT. TACK IT ON THE END TO AVOID LRU REMOVAL. NO MODS.
+										simulated_cache.emplace_back(index_f);
+									}
+
 									// float u = filters[k][ (c*R*S) + (sigmaH*sp + spp)*(R) + (sigmaW*rp + rpp) ];
 									// float v = in[ (c*in_H*in_W) + (spp + sigmaH*(sp + h))*(in_W) + (rpp + sigmaW*(rp + w)) ];
 									// out[ k*W*H + h*W + w ] += u*v;
@@ -84,5 +159,7 @@ int convolve_cacnn
 			}
 		}
 	}
+
+	printf("");
 	return 0;
 }
