@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <errno.h>
+#include <linked_hash.hpp>
 
 // Standard Convolution
 int convolve_std

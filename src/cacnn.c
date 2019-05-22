@@ -10,11 +10,13 @@ int convolve_cacnn
 	uint32_t RP_block, uint32_t RPP_block, uint32_t SP_block, uint32_t SPP_block
 )
 {
+	//begin benchmarking shibboleth
 	//set up the list for cache tracking
 	linked_hash_set<unsigned long long int> simulated_cache;
 	unsigned int cache_misses = 0;
 	unsigned long long int index_o, index_i, index_f, num_iter = 0;
 	unsigned int current_cache_count, prior_cache_count;
+	//end benchmarking shibboleth
 
 	// Main Iterations
 	uint32_t c,   k,   w,   h,   rp,   rpp,   sp,   spp;
