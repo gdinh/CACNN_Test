@@ -160,6 +160,8 @@ int convolve_cacnn
 		}
 	}
 
-	printf("");
+	printf("Cache size: %u\n", CACHESIZE);
+	printf("# of occupied spots after finishing (should be CACHESIZE): %u\n", current_cache_count);
+	printf("# of cache misses: %u\n", cache_misses);
 	return 0;
 }
