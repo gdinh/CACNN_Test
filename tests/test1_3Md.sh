@@ -22,7 +22,10 @@ __RPP_B=2
 
 echo $TEST_NAME
 
-./measure $__C $__K $__W $__H $__R $__S $__SIGMAW $__SIGMAH $__C_B $__K_B $__W_B $__H_B $__RP_B $__RPP_B $__SP_B $__SPP_B 1 32768;
+for cache_size in 16384 32768 65536 131072 262144 524288
+do
+	./measure $__C $__K $__W $__H $__R $__S $__SIGMAW $__SIGMAH $__C_B $__K_B $__W_B $__H_B $__RP_B $__RPP_B $__SP_B $__SPP_B 1 $cache_size;
+done
 
 #for cache_size in 16384 32768 65536 131072 262144 524288
 #do

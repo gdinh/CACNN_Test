@@ -30,6 +30,7 @@ uint32_t __SPP_B;
 
 uint32_t __TRIALS;
 uint32_t __L1_SIZE;
+uint32_t CACHESIZE;
 
 int compare (const void * a, const void * b)
 {
@@ -308,6 +309,9 @@ int main ( int argc, const char* argv[] )
 
 	 __TRIALS  = atoi(argv[17]);
 	 __L1_SIZE = atoi(argv[18]);
+	 CACHESIZE = __L1_SIZE;
+
+	 printf( "Cache size = %d\n", CACHESIZE );
 
 	 // Test Prep
 	 	// Create Input
@@ -428,7 +432,7 @@ int main ( int argc, const char* argv[] )
 	 // For each algorithm in {im2col, convolve_std, convolve_cacnn}: convolve_std
 	 // Repeat TRIALS times
 	 uint64_t a, b, c, d;
-	 printf("Standard convolve here:");
+	 printf("Standard convolve here:\n");
 	 for ( i = 0; i < __TRIALS; ++i )
 	 {
 	 	// Load All Data (touch input, zero output)
@@ -459,8 +463,8 @@ int main ( int argc, const char* argv[] )
 	 	volatile double end = read_timer();
 	 	data_std[i] = end - start;
 	 }
-	
-	 printf("CA convolve here:");
+
+	 printf("CA convolve here:\n");
 	 // For each algorithm in {im2col, convolve_std, convolve_cacnn}: convolve_cacnn
 	 for ( i = 0; i < __TRIALS; ++i )
 	 {
@@ -495,11 +499,8 @@ int main ( int argc, const char* argv[] )
 	 	data_cacnn[i] = end - start;
 	 }
 
-	 return 0;
-
-	/*
 	 // // For each algorithm in {im2col, convolve_std, convolve_cacnn}: im2col
-	 printf("CARMA based thing here.")
+	 printf("CARMA based thing here.\n");
 	 for ( i = 0; i < __TRIALS; ++i )
 	 {
 	 	// Load All Data (touch input, zero output)
@@ -528,7 +529,6 @@ int main ( int argc, const char* argv[] )
 	 	volatile double end = read_timer();
 	 	data_im2col[i] = end - start;
 	 }
-	 */
 
 	 // Print results
 	 // printf( "Standard Convolution Timing (Seconds)\n" );

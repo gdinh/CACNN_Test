@@ -1,6 +1,6 @@
 #include "cacnn.h"
 #define min( a, b ) (a < b ? a : b)
-#define CACHESIZE 16384
+
 // Communication Avoiding Convolution
 int convolve_cacnn
 (
@@ -156,9 +156,9 @@ int convolve_cacnn
 		}
 	}
 
-	printf("Cache size: %u\n", CACHESIZE);
-	printf("# of occupied spots after finishing (should be CACHESIZE): %u\n", current_cache_count);
+	// printf("Cache size: %u\n", CACHESIZE);
+	// printf("# of occupied spots after finishing (should be CACHESIZE): %u\n", current_cache_count);
 	printf("# of cache misses: %u\n", cache_misses);
-	printf("# of iterations: %u\n", num_iter);
+	// printf("# of iterations: %u\n", num_iter);
 	return 0;
 }

@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <linked_hash.hpp>
 
+extern uint32_t CACHESIZE;
+
 // Standard Convolution
 int convolve_cacnn
 (
